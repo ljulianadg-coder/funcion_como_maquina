@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Máquina de Malteadas - Función como Máquina</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Carga de Chart.js para la gráfica -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>🥤 La Máquina de Malteadas Matemáticas</h1>
+        <p>Una función $f(x)$ es como una licuadora: ingresas frutas ($x$), se aplica una receta ($f$), y obtienes vasos de malteada ($y$).</p>
+    </header>
+
+    <main class="container">
+        <!-- Panel Izquierdo: Controles -->
+        <section class="card controls">
+            <h2>1. Configura tu Receta</h2>
+
+            <div class="form-group">
+                <label for="recipe-select">Selecciona la Receta / Función:</label>
+                <select id="recipe-select">
+                    <option value="linear">Especial de la Casa: f(x) = 2x + 3</option>
+                    <option value="quadratic">Doble Sabor: f(x) = x² - 1</option>
+                    <option value="rational">Receta Cero (Dominio): f(x) = 10 / x</option>
+                </select>
+            </div>
+
+            <div class="recipe-description" id="recipe-desc">
+                Multiplica el número de frutas por 2 y le suma 3 vasos base de yogurt.
+            </div>
+
+            <h2>2. Prepara los Ingredientes</h2>
+            <div class="form-group">
+                <label for="fruit-input">Cantidad de Frutas (x):</label>
+                <input type="number" id="fruit-input" value="3" min="-10" max="10">
+            </div>
+
+            <button id="blend-btn" class="btn-blend">🥤 ¡Licuar Ingredientes!</button>
+        </section>
+
+        <!-- Panel Central: Animación de la Licuadora -->
+        <section class="card blender-section">
+            <h2>Procesamiento en Vivo</h2>
+
+            <div class="blender-container">
+                <div class="hopper" id="hopper">
+                    <!-- Frutas animadas -->
+                </div>
+
+                <div class="blender-jar" id="blender-jar">
+                    <div class="blade" id="blade">⚙️</div>
+                    <div class="liquid" id="liquid"></div>
+                </div>
+
+                <div class="dispenser" id="dispenser">
+                    <div class="shake-output" id="shake-output">
+                        🥤
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-box" id="status-box">
+                Ingresa una cantidad de frutas y presiona Licuar.
+            </div>
+        </section>
+
+        <!-- Panel Derecho: Resultados y Gráfica -->
+        <section class="card results-section">
+            <h2>3. Registro de Comandas (x, y)</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Frutas (x)</th>
+                            <th>Receta f(x)</th>
+                            <th>Malteadas (y)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table">
+                        <!-- Se llena con JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="functionChart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Explicación Teórica -->
+    <footer class="theory-card">
+        <h3>💡 ¿Por qué esto explica una función?</h3>
+        <ul>
+            <li><strong>Unicidad:</strong> Si pones la misma cantidad de frutas ($x$) con la misma receta, <em>siempre</em> obtendrás exactamente la misma cantidad de malteadas ($y$).</li>
+            <li><strong>Dominio:</strong> No todas las recetas aceptan cualquier valor. Si usas la receta $10/x$ y pones $0$ frutas, la licuadora falla (división entre cero), demostrando que $x=0$ está fuera del dominio.</li>
+        </ul>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

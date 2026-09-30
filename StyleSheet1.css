@@ -1,0 +1,179 @@
+﻿:root {
+    --primary: #ff4757;
+    --secondary: #ff6b81;
+    --bg: #f7f1e3;
+    --card-bg: #ffffff;
+    --text: #2f3542;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    header h1 {
+        color: var(--primary);
+        margin-bottom: 5px;
+    }
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+select, input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.recipe-description {
+    background: #f1f2f6;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.btn-blend {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .btn-blend:hover {
+        background: var(--secondary);
+    }
+
+/* Licuadora */
+.blender-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 250px;
+    justify-content: center;
+    position: relative;
+}
+
+.blender-jar {
+    width: 100px;
+    height: 140px;
+    border: 4px solid #747d8c;
+    border-radius: 0 0 15px 15px;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255,255,255,0.8);
+}
+
+.liquid {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 0%;
+    background: #ff6b81;
+    transition: height 0.5s;
+}
+
+.blade {
+    position: absolute;
+    bottom: 5px;
+    left: 35%;
+    font-size: 24px;
+}
+
+    .blade.spinning {
+        animation: spin 0.2s infinite linear;
+    }
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.status-box {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f1f2f6;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Tablas y Gráfica */
+.table-container {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #f1f2f6;
+}
+
+.chart-container {
+    height: 200px;
+}
+
+.theory-card {
+    max-width: 1200px;
+    margin: 20px auto 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+}
