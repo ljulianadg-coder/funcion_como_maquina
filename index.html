@@ -400,8 +400,7 @@
     </footer>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            // Configuración de recetas principales
+        function initApp() {
             var recipes = {
                 linear: {
                     formula: function(x) { return 2 * x + 3; },
@@ -425,7 +424,6 @@
                 }
             };
 
-            // Referencias DOM
             var recipeSelect = document.getElementById('recipe-select');
             var recipeDesc = document.getElementById('recipe-desc');
             var fruitInput = document.getElementById('fruit-input');
@@ -436,23 +434,20 @@
             var historyTable = document.getElementById('history-table');
             
             var canvas = document.getElementById('functionCanvas');
+            if(!canvas) return;
             var ctx = canvas.getContext('2d');
             var pointsHistory = [];
 
-            // Dibuja el plano cartesiano y la función en canvas nativo (sin librerías externas)
             function drawChart() {
                 var width = canvas.width;
                 var height = canvas.height;
-                
                 ctx.clearRect(0, 0, width, height);
 
-                // Ejes
                 var centerX = width / 2;
                 var centerY = height / 2;
-                var scaleX = width / 20;  // Rango -10 a 10
-                var scaleY = height / 40; // Rango -20 a 20
+                var scaleX = width / 20;
+                var scaleY = height / 40;
 
-                // Dibuja rejilla
                 ctx.strokeStyle = '#e2e8f0';
                 ctx.lineWidth = 1;
                 for (var x = -10; x <= 10; x += 2) {
@@ -470,7 +465,6 @@
                     ctx.stroke();
                 }
 
-                // Ejes X e Y
                 ctx.strokeStyle = '#94a3b8';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -480,7 +474,6 @@
                 ctx.lineTo(centerX, height);
                 ctx.stroke();
 
-                // Curva de la función
                 var currentRecipe = recipes[recipeSelect.value];
                 ctx.strokeStyle = '#ff4757';
                 ctx.lineWidth = 2.5;
@@ -508,7 +501,6 @@
                 }
                 ctx.stroke();
 
-                // Puntos registrados
                 for (var i = 0; i < pointsHistory.length; i++) {
                     var pt = pointsHistory[i];
                     var px = centerX + pt.x * scaleX;
@@ -526,7 +518,6 @@
                 }
             }
 
-            // Cambios en la receta
             recipeSelect.addEventListener('change', function() {
                 var key = recipeSelect.value;
                 recipeDesc.textContent = recipes[key].desc;
@@ -535,7 +526,6 @@
                 drawChart();
             });
 
-            // Botón Licuar
             blendBtn.addEventListener('click', function() {
                 var x = parseFloat(fruitInput.value);
                 var selectedKey = recipeSelect.value;
@@ -560,12 +550,10 @@
                         
                         statusBox.textContent = "✅ ¡Listo! " + x + " frutas ➔ " + resultY + " malteadas.";
                         
-                        // Añadir a tabla
                         var row = document.createElement('tr');
                         row.innerHTML = '<td>' + x + '</td><td>' + recipe.expression + '</td><td><strong>' + resultY + '</strong></td>';
                         historyTable.prepend(row);
 
-                        // Añadir a gráfica
                         pointsHistory.push({ x: x, y: parseFloat(resultY) });
                         drawChart();
 
@@ -575,7 +563,6 @@
                 }, 800);
             });
 
-            // Calculadora Rápida
             var calcX = document.getElementById('calc-x');
             var calcOp = document.getElementById('calc-op');
             var calcBtn = document.getElementById('calc-btn');
@@ -611,9 +598,14 @@
                 }
             });
 
-            // Dibujar gráfica inicial al cargar
             drawChart();
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
     </script>
 </body>
 </html>
