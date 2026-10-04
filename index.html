@@ -157,6 +157,7 @@
             bottom: 5px;
             left: 35%;
             font-size: 24px;
+            z-index: 2;
         }
 
         .blade.spinning {
@@ -242,6 +243,7 @@
             color: white;
         }
 
+        /* Explicación Teórica y Bibliografía */
         .theory-card {
             max-width: 1200px;
             margin: 20px auto 0 auto;
@@ -253,6 +255,12 @@
 
         .theory-card ul {
             line-height: 1.6;
+        }
+
+        .biblio-section {
+            margin-top: 20px;
+            border-top: 2px solid #f1f2f6;
+            padding-top: 15px;
         }
     </style>
     <!-- Carga de Chart.js para la gráfica -->
@@ -323,7 +331,7 @@
                         </tr>
                     </thead>
                     <tbody id="history-table">
-                        <!-- Se llena con JS -->
+                        <!-- Se llena dinámicamente con JS -->
                     </tbody>
                 </table>
             </div>
@@ -362,7 +370,7 @@
         <button class="btn-blend" id="calc-btn" style="margin-top: 15px; background: #70a1ff;">⚡ Calcular Disponibilidad de Ingredientes</button>
     </section>
 
-    <!-- Explicación Teórica -->
+    <!-- Explicación Teórica y Bibliografía -->
     <footer class="theory-card">
         <h3>💡 ¿Por qué esto explica una función?</h3>
         <ul>
@@ -373,32 +381,40 @@
                 </ul>
             </li>
             <li><strong>El Punto en el Plano (x, y):</strong> Cada punto en la gráfica muestra cómo se relaciona una entrada específica con su única salida correspondiente. La línea continua representa el comportamiento de la receta para todos los valores posibles.</li>
-            <h3>Bibliografía</h3>
-            <ul>
-                    <li>Google DeepMind. (2026). Gemini AI (Versión 2.5) [Modelo de lenguaje grande]. https://gemini.google.com</li>
-                    <li>James Stewart, Daniel Clegg y Saleem Watson. (2021). CALCULUS, Early Transcendentals (Ninth Edition). CENGAGE.</li>
-                <li>mathz. Funciones: La Máquina Matemática. mathz.app. https://www.mathz.app/es/lessons/functions-intro/#:~:text=Funciones%3A%20La%20M%C3%A1quina%20Matem%C3%A1tica.%20Imagina%20una%20m%C3%A1quina,donde%20cada%20entrada
-                    %20tiene%20exactamente%20una%20salida</li>
-                </ul>
         </ul>
+
+        <div class="biblio-section">
+            <h3>📚 Bibliografía</h3>
+            <ul>
+                <li>Google DeepMind. (2026). Gemini AI (Versión 2.5) [Modelo de lenguaje grande]. https://gemini.google.com</li>
+                <li>James Stewart, Daniel Clegg y Saleem Watson. (2021). CALCULUS, Early Transcendentals (Ninth Edition). CENGAGE.</li>
+                <li>mathz. Funciones: La Máquina Matemática. mathz.app. https://www.mathz.app/es/lessons/functions-intro/#:~:text=Funciones%3A%20La%20M%C3%A1quina%20Matem%C3%A1tica.%20Imagina%20una%20m%C3%A1quina,donde%20cada%20entrada%20tiene%20exactamente%20una%20salida</li>
+            </ul>
+        </div>
     </footer>
 
     <script>
-        // Configuración de recetas principales
-        const recipes = {
+        // Configuración de recetas principales (Sintaxis limpia)
+        var recipes = {
             linear: {
-                formula: (x) => 2 * x + 3,
+                formula: function(x) {
+                    return 2 * x + 3;
+                },
                 expression: "f(x) = 2x + 3",
                 desc: "Multiplica las frutas por 2 y le suma 3 de base."
             },
             quadratic: {
-                formula: (x) => Math.pow(x, 2) - 1,
+                formula: function(x) {
+                    return Math.pow(x, 2) - 1;
+                },
                 expression: "f(x) = x² - 1",
                 desc: "Eleva las frutas al cuadrado y le resta 1."
             },
             rational: {
-                formula: (x) => {
-                    if (x === 0) throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
+                formula: function(x) {
+                    if (x === 0) {
+                        throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
+                    }
                     return 10 / x;
                 },
                 expression: "f(x) = 10 / x",
@@ -406,19 +422,19 @@
             }
         };
 
-        // DOM principal
-        const recipeSelect = document.getElementById('recipe-select');
-        const recipeDesc = document.getElementById('recipe-desc');
-        const fruitInput = document.getElementById('fruit-input');
-        const blendBtn = document.getElementById('blend-btn');
-        const statusBox = document.getElementById('status-box');
-        const blade = document.getElementById('blade');
-        const liquid = document.getElementById('liquid');
-        const historyTable = document.getElementById('history-table');
+        // Elementos DOM
+        var recipeSelect = document.getElementById('recipe-select');
+        var recipeDesc = document.getElementById('recipe-desc');
+        var fruitInput = document.getElementById('fruit-input');
+        var blendBtn = document.getElementById('blend-btn');
+        var statusBox = document.getElementById('status-box');
+        var blade = document.getElementById('blade');
+        var liquid = document.getElementById('liquid');
+        var historyTable = document.getElementById('history-table');
 
-        // Chart.js
-        const ctx = document.getElementById('functionChart').getContext('2d');
-        const chart = new Chart(ctx, {
+        // Configuración de Chart.js
+        var ctx = document.getElementById('functionChart').getContext('2d');
+        var chart = new Chart(ctx, {
             type: 'line',
             data: {
                 datasets: [
@@ -459,37 +475,42 @@
         });
 
         function updateFunctionCurve(recipeKey) {
-            const recipe = recipes[recipeKey];
-            const curvePoints = [];
+            var recipe = recipes[recipeKey];
+            var curvePoints = [];
             
-            for (let x = -10; x <= 10; x += 0.2) {
+            for (var x = -10; x <= 10; x += 0.2) {
                 try {
-                    const y = recipe.formula(x);
+                    var y = recipe.formula(x);
                     if (Math.abs(y) <= 30) {
                         curvePoints.push({ x: parseFloat(x.toFixed(2)), y: parseFloat(y.toFixed(2)) });
                     }
-                } catch (e) {}
+                } catch (e) {
+                    // Ignorar puntos fuera del dominio
+                }
             }
             
             chart.data.datasets[0].data = curvePoints;
-            chart.data.datasets[0].label = `Curva de ${recipe.expression}`;
+            chart.data.datasets[0].label = 'Curva de ' + recipe.expression;
             chart.update();
         }
 
+        // Inicializar curva por primera vez
         updateFunctionCurve(recipeSelect.value);
 
-        recipeSelect.addEventListener('change', () => {
-            const key = recipeSelect.value;
+        // Evento al cambiar selección de receta
+        recipeSelect.addEventListener('change', function() {
+            var key = recipeSelect.value;
             recipeDesc.textContent = recipes[key].desc;
             chart.data.datasets[1].data = []; 
             historyTable.innerHTML = ''; 
             updateFunctionCurve(key);
         });
 
-        blendBtn.addEventListener('click', () => {
-            const x = parseFloat(fruitInput.value);
-            const selectedKey = recipeSelect.value;
-            const recipe = recipes[selectedKey];
+        // Evento del botón Licuar
+        blendBtn.addEventListener('click', function() {
+            var x = parseFloat(fruitInput.value);
+            var selectedKey = recipeSelect.value;
+            var recipe = recipes[selectedKey];
 
             if (isNaN(x)) {
                 statusBox.textContent = "⚠️ Ingresa un número válido de frutas.";
@@ -500,28 +521,28 @@
             liquid.style.height = "70%";
             statusBox.textContent = "Licuando frutas y procesando función...";
 
-            setTimeout(() => {
+            setTimeout(function() {
                 blade.classList.remove('spinning');
                 liquid.style.height = "0%";
 
                 try {
-                    const y = recipe.formula(x);
-                    const resultY = Number.isInteger(y) ? y : y.toFixed(2);
+                    var y = recipe.formula(x);
+                    var resultY = Number.isInteger(y) ? y : y.toFixed(2);
                     
-                    statusBox.textContent = `✅ ¡Listo! ${x} frutas ➔ ${resultY} malteadas.`;
+                    statusBox.textContent = "✅ ¡Listo! " + x + " frutas ➔ " + resultY + " malteadas.";
                     
                     addRowToTable(x, recipe.expression, resultY);
                     addPointToChart(x, parseFloat(resultY));
 
                 } catch (error) {
-                    statusBox.textContent = `❌ ${error.message}`;
+                    statusBox.textContent = "❌ " + error.message;
                 }
             }, 800);
         });
 
         function addRowToTable(x, expr, y) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${x}</td><td>${expr}</td><td><strong>${y}</strong></td>`;
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + x + '</td><td>' + expr + '</td><td><strong>' + y + '</strong></td>';
             historyTable.prepend(row);
         }
 
@@ -530,15 +551,15 @@
             chart.update();
         }
 
-        // Lógica de la nueva Calculadora
-        const calcX = document.getElementById('calc-x');
-        const calcOp = document.getElementById('calc-op');
-        const calcBtn = document.getElementById('calc-btn');
-        const calcResult = document.getElementById('calc-result');
+        // Lógica de la Calculadora Rápida
+        var calcX = document.getElementById('calc-x');
+        var calcOp = document.getElementById('calc-op');
+        var calcBtn = document.getElementById('calc-btn');
+        var calcResult = document.getElementById('calc-result');
 
-        calcBtn.addEventListener('click', () => {
-            const x = parseFloat(calcX.value);
-            const op = calcOp.value;
+        calcBtn.addEventListener('click', function() {
+            var x = parseFloat(calcX.value);
+            var op = calcOp.value;
 
             if (isNaN(x)) {
                 calcResult.textContent = "Resultado: Ingresa un número válido";
@@ -548,20 +569,20 @@
 
             if (op === 'sqrt') {
                 if (x < 0) {
-                    calcResult.textContent = `❌ Error: √(${x}) no existe en números reales. ¡Fruta no disponible en el inventario!`;
+                    calcResult.textContent = "❌ Error: √(" + x + ") no existe en números reales. ¡Fruta no disponible en el inventario!";
                     calcResult.className = "calc-result error";
                 } else {
-                    const res = Math.sqrt(x).toFixed(2);
-                    calcResult.textContent = `✅ Resultado: √(${x}) = ${res} unidades de sabor`;
+                    var resSqrt = Math.sqrt(x).toFixed(2);
+                    calcResult.textContent = "✅ Resultado: √(" + x + ") = " + resSqrt + " unidades de sabor";
                     calcResult.className = "calc-result";
                 }
             } else if (op === 'square') {
-                const res = Math.pow(x, 2);
-                calcResult.textContent = `✅ Resultado: (${x})² = ${res}`;
+                var resSq = Math.pow(x, 2);
+                calcResult.textContent = "✅ Resultado: (" + x + ")² = " + resSq;
                 calcResult.className = "calc-result";
             } else if (op === 'double') {
-                const res = 2 * x;
-                calcResult.textContent = `✅ Resultado: 2 * (${x}) = ${res}`;
+                var resDbl = 2 * x;
+                calcResult.textContent = "✅ Resultado: 2 * (" + x + ") = " + resDbl;
                 calcResult.className = "calc-result";
             }
         });
