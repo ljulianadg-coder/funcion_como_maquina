@@ -290,7 +290,10 @@
                 <select id="recipe-select">
                     <option value="linear">Especial de la Casa: f(x) = 2x + 3</option>
                     <option value="quadratic">Doble Sabor: f(x) = x² - 1</option>
+                    <option value="cubic">Triple Sabor: f(x) = x³</option>
                     <option value="rational">Receta Cero: f(x) = 10 / x</option>
+                    <option value="sqrt">Sabor Raíz: f(x) = √(x + 5)</option>
+                    <option value="abs">Valor Absoluto: f(x) = |x|</option>
                 </select>
             </div>
 
@@ -380,13 +383,13 @@
     <footer class="theory-card">
         <h3>💡 ¿Por qué esto explica una función?</h3>
         <ul>
-            <li><strong>Dominio y Frutas No Disponibles:</strong> No todas las recetas o máquinas aceptan cualquier valor. 
+            <li><strong>Dominio y Frutas No Disponibles:</strong> No todas las recetas aceptan cualquier cantidad. 
                 <ul>
-                    <li>Si usas la receta 10/x con x = 0 frutas, la máquina falla por división entre cero.</li>
-                    <li>Si en la calculadora intentas la Raíz Cuadrada √x con un número negativo (como -4), obtendrás una alerta de error. Esto representa que en el mundo real no puedes usar ingredientes negativos o inexistentes en el inventario.</li>
+                    <li>En <code>10/x</code> con x = 0, la máquina falla por división entre cero.</li>
+                    <li>En <code>√(x + 5)</code> con x &lt; -5, obtendrás error de dominio por raíz negativa.</li>
                 </ul>
             </li>
-            <li><strong>El Punto en el Plano (x, y):</strong> Cada punto en la gráfica muestra cómo se relaciona una entrada específica con su única salida correspondiente. La línea continua representa el comportamiento de la receta para todos los valores posibles.</li>
+            <li><strong>El Punto en el Plano (x, y):</strong> Cada valor ingresado tiene una única salida de malteadas.</li>
         </ul>
 
         <div class="biblio-section">
@@ -394,7 +397,7 @@
             <ul>
                 <li>Google DeepMind. (2026). Gemini AI (Versión 2.5) [Modelo de lenguaje grande]. https://gemini.google.com</li>
                 <li>James Stewart, Daniel Clegg y Saleem Watson. (2021). CALCULUS, Early Transcendentals (Ninth Edition). CENGAGE.</li>
-                <li>mathz. Funciones: La Máquina Matemática. mathz.app. https://www.mathz.app/es/lessons/functions-intro/#:~:text=Funciones%3A%20La%20M%C3%A1quina%20Matem%C3%A1tica.%20Imagina%20una%20m%C3%A1quina,donde%20cada%20entrada%20tiene%20exactamente%20una%20salida</li>
+                <li>mathz. Funciones: La Máquina Matemática. mathz.app. https://www.mathz.app/es/lessons/functions-intro/</li>
             </ul>
         </div>
     </footer>
@@ -412,6 +415,11 @@
                     expression: "f(x) = x² - 1",
                     desc: "Eleva las frutas al cuadrado y le resta 1."
                 },
+                cubic: {
+                    formula: function(x) { return Math.pow(x, 3); },
+                    expression: "f(x) = x³",
+                    desc: "Eleva las frutas al cubo."
+                },
                 rational: {
                     formula: function(x) {
                         if (x === 0) {
@@ -421,6 +429,21 @@
                     },
                     expression: "f(x) = 10 / x",
                     desc: "Divide 10 entre la cantidad de frutas."
+                },
+                sqrt: {
+                    formula: function(x) {
+                        if (x + 5 < 0) {
+                            throw new Error("¡Error de Dominio! Frutas insuficientes para sacar raíz (x < -5).");
+                        }
+                        return Math.sqrt(x + 5);
+                    },
+                    expression: "f(x) = √(x + 5)",
+                    desc: "Suma 5 a las frutas y calcula su raíz cuadrada."
+                },
+                abs: {
+                    formula: function(x) { return Math.abs(x); },
+                    expression: "f(x) = |x|",
+                    desc: "Devuelve el valor absoluto positivo de las frutas."
                 }
             };
 
