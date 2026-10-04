@@ -4,338 +4,764 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Máquina de Malteadas Matemáticas</title>
+    <!-- Chart.js para visualización de gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f7f9fa;
-            color: #333;
+        :root {
+            --primary: #ff6b81;
+            --secondary: #ffa502;
+            --accent: #2ed573;
+            --bg: #f7f1e3;
+            --card-bg: #ffffff;
+            --text: #2f3542;
+            --text-muted: #747d8c;
+            --border: #eccc68;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
         header {
             text-align: center;
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        section {
-            background: white;
+
+            header h1 {
+                color: var(--primary);
+                font-size: 2.2rem;
+                margin-bottom: 5px;
+            }
+
+            header p {
+                color: var(--text-muted);
+                font-size: 1.1rem;
+            }
+
+        .academic-subtitle {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border: 2px solid var(--border);
         }
-        h2 {
-            color: #ff477e;
+
+            .card.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .card h2 {
+                color: var(--primary);
+                font-size: 1.4rem;
+                margin-bottom: 15px;
+                border-bottom: 2px dashed var(--border);
+                padding-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
         }
-        select, input, button {
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+            select:focus, input:focus {
+                border-color: var(--primary);
+            }
+
+        .math-formula {
+            background: #f1f2f6;
             padding: 10px;
-            margin: 5px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #3742fa;
+            margin-top: 5px;
+            font-size: 0.95rem;
         }
-        button {
-            background-color: #ff477e;
+
+        .recipe-description-box {
+            background-color: #f1f2f6;
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #57606f;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: var(--primary);
             color: white;
             border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
+            width: 100%;
+            transition: background 0.3s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
-        button:hover {
-            background-color: #e0356d;
+
+            .btn:hover {
+                background: #ff4757;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+        /* Animation Area */
+        .blender-container {
+            position: relative;
+            height: 180px;
+            background: #eccc6822;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            overflow: hidden;
+            border: 1px dashed var(--secondary);
         }
+
+        .blender-glass {
+            width: 80px;
+            height: 100px;
+            border: 4px solid #718093;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .blender-liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: var(--primary);
+            transition: height 1s ease-in-out, background-color 0.5s;
+        }
+
+            .blender-liquid.blending {
+                animation: wave 0.5s infinite alternate;
+            }
+
+        @keyframes wave {
+            0% {
+                transform: scaleY(1);
+            }
+
+            100% {
+                transform: scaleY(1.08);
+            }
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 12px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            text-align: left;
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #dcdde1;
         }
+
         th {
-            background-color: #ffe6ee;
+            background-color: #f1f2f6;
+            color: var(--text);
         }
-        canvas {
-            background: #fafafa;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            display: block;
-            margin: 10px auto;
-        }
-        .explanation-box {
-            background-color: #fff0f5;
-            border-left: 4px solid #ff477e;
-            padding: 10px 15px;
+
+        .explanatory-legend {
+            background-color: #f1f2f6;
+            border-left: 4px solid var(--secondary);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            color: #57606f;
             margin-top: 10px;
-            font-size: 14px;
-            border-radius: 0 6px 6px 0;
+            line-height: 1.4;
         }
+
+            .explanatory-legend strong {
+                color: var(--text);
+            }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 230px;
+            width: 100%;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+            .chart-controls input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+        /* Error Message */
+        .alert-error {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        /* Calculator Grid */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-calc {
+            background: #f1f2f6;
+            border: 1px solid #dcdde1;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+
+            .btn-calc:hover {
+                background: #e4e7eb;
+            }
+
+            .btn-calc.action {
+                background: var(--secondary);
+                color: white;
+            }
+
+        /* Estilos para Bibliografía */
+        .bibliography-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 0.93rem;
+            color: #4b6584;
+            line-height: 1.6;
+        }
+
+            .bibliography-list li {
+                margin-bottom: 8px;
+            }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🥤 La Máquina de Malteadas Matemáticas</h1>
-        <h3>Presentado por: <span>Laura Juliana Daza y Mariana Torres</span></h3>
+        <h1><i class="fa-solid fa-blender"></i> La Máquina de Malteadas Matemáticas</h1>
         <p>Una función f(x) es como una licuadora: ingresas frutas (x), se aplica una receta (f), y obtienes vasos de malteada (y).</p>
+        <div class="academic-subtitle">
+            Presentado por: <strong>Laura Juliana Daza y Mariana Torres</strong>
+        </div>
     </header>
 
-    <main>
-        <!-- Sección 1: Configurar Receta -->
-        <section>
-            <h2>1. Configura tu Receta</h2>
-            <div>
-                <select id="recipeSelect" onchange="updateRecipeDescription()">
-                    <option value="linear">Especial de la Casa: f(x) = 2x + 3</option>
-                    <option value="quadratic">Doble Sabor: f(x) = x² - 1</option>
-                    <option value="cubic">Triple Sabor: f(x) = x³</option>
-                    <option value="polynomial">Sabor Mixto (Polinómica): f(x) = x³ - 3x + 2</option>
-                    <option value="euler">Sabor Exponencial (Euler): f(x) = eˣ</option>
-                    <option value="ln">Sabor Logaritmo Natural: f(x) = ln(x)</option>
-                    <option value="log">Sabor Logaritmo Base 10: f(x) = log₁₀(x)</option>
-                    <option value="sqrt">Sabor Raíz: f(x) = √(x + 5)</option>
-                    <option value="rational">Receta Cero (Racional): f(x) = 10 / x</option>
+    <div class="container">
+
+        <!-- SECCIÓN 1: PREPARACIÓN Y LICUADORA -->
+        <div class="card">
+            <h2><i class="fa-solid fa-stroopwafel"></i> 1. Configura tu Receta</h2>
+
+            <div class="form-group">
+                <label for="recipe-select">Selecciona la Receta / Función:</label>
+                <select id="recipe-select" onchange="updateFormulaDisplay()">
+                    <option value="lineal">Especial Lineal: f(x) = 2x + 3</option>
+                    <option value="cuadratica">Cuadrática Doble: f(x) = x² - 2</option>
+                    <option value="cubica">Cúbica de la Casa: f(x) = x³ - 3x</option>
+                    <option value="polinomica">Polinómica Suprema: f(x) = 0.5x⁴ - 2x² + 1</option>
+                    <option value="euler">Exponencial cremosa: f(x) = e^x</option>
+                    <option value="ln">Logaritmo Natural: f(x) = ln(x)</option>
+                    <option value="log">Logaritmo Base 10: f(x) = log₁₀(x)</option>
+                    <option value="radical">Radical Refrescante: f(x) = √(x)</option>
+                    <option value="racional">Racional Proporcional: f(x) = 10 / x</option>
                 </select>
-            </div>
-            <div id="recipeDescription" class="explanation-box">
-                Multiplica el número de frutas por 2 y le suma 3 vasos base de yogurt.
+                <div id="formula-display" class="math-formula">f(x) = 2x + 3</div>
+                <div id="recipe-desc" class="recipe-description-box">
+                    Multiplica el número de frutas por 2 y le suma 3 vasos base de yogurt.
+                </div>
             </div>
 
-            <h2>2. Prepara los Ingredientes</h2>
-            <div>
-                <label for="inputX">Cantidad de Frutas (x): </label>
-                <input type="number" id="inputX" value="2" step="any">
-                <button onclick="processMachine()">¡Licuar!</button>
+            <div class="form-group">
+                <label for="input-x">Cantidad de Fruta o Expresión (Ej: <code>2</code>, <code>3+1</code>, <code>4*2</code>):</label>
+                <input type="text" id="input-x" value="2" placeholder="Puedes usar operaciones (+, -, *, /)">
             </div>
-        </section>
 
-        <!-- Sección 3: Registro de Comandos y Gráfica -->
-        <section>
-            <h2>3. Registro de Comandos (x, y)</h2>
-            <div>
+            <button class="btn" onclick="prepareSmoothie()">
+                <i class="fa-solid fa-play"></i> Encender Licuadora (Procesar <em>f(x)</em>)
+            </button>
+
+            <div id="error-alert" class="alert-error"></div>
+
+            <!-- Animación Licuadora -->
+            <div class="blender-container">
+                <div class="blender-glass">
+                    <div id="blender-liquid" class="blender-liquid"></div>
+                </div>
+                <p id="blender-status" style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">
+                    Esperando ingrediente...
+                </p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: GRÁFICA DE LA FUNCIÓN -->
+        <div class="card">
+            <h2><i class="fa-solid fa-chart-line"></i> 2. Representación Gráfica de la Receta</h2>
+            <div class="chart-container">
+                <canvas id="functionChart"></canvas>
+            </div>
+
+            <div class="chart-controls">
+                <input type="checkbox" id="accumulate-points" onchange="toggleAccumulation()">
+                <label for="accumulate-points" style="cursor: pointer; margin-bottom: 0;">Acumular puntos en la gráfica para ver la curva de la función</label>
+            </div>
+
+            <div class="explanatory-legend">
+                <strong><i class="fa-solid fa-circle-info"></i> Explicación del Comportamiento y del Punto:</strong>
+                La curva continua muestra la función completa. El <strong>punto destacado (marcador)</strong> representa el resultado exacto de tu última malteada licuada: su coordenada <em>x</em> indica la cantidad de fruta agregada y su coordenada <em>y</em> señala el volumen final obtenido. Si activas la opción de acumular, verás cómo múltiples puntos van dibujando progresivamente la forma de la receta.
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: REGISTRO DE COMANDAS -->
+        <div class="card">
+            <h2><i class="fa-solid fa-receipt"></i> 3. Registro de Comandas Realizadas</h2>
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Frutas (x)</th>
-                            <th>Receta f(x)</th>
-                            <th>Malteadas (y)</th>
+                            <th>Fruta (<em>x</em>)</th>
+                            <th>Receta (<em>f</em>)</th>
+                            <th>Malteadas (<em>y</em>)</th>
                         </tr>
                     </thead>
-                    <tbody id="resultTableBody">
-                        <!-- Los resultados se llenan dinámicamente -->
+                    <tbody id="history-tbody">
+                        <!-- Filas dinámicas -->
                     </tbody>
                 </table>
             </div>
-            <div class="explanation-box">
-                <strong>¿Qué significa esto?</strong><br>
+            <div class="explanatory-legend">
+                <strong><i class="fa-solid fa-circle-info"></i> Leyenda de la Tabla de Comandas:</strong>
                 <ul>
-                    <li><strong>Frutas ($x$):</strong> Es la variable independiente ingresada (el dominio de entrada).</li>
-                    <li><strong>Receta $f(x)$:</strong> La regla matemática aplicada en la máquina.</li>
-                    <li><strong>Malteadas ($y$):</strong> Es el resultado de la función evaluada, es decir, la variable dependiente (el rango o salida).</li>
+                    <li><strong>Frutas (<em>x</em>):</strong> Variable independiente (entrada).</li>
+                    <li><strong>Receta (<em>f</em>):</strong> Regla de correspondencia matemática.</li>
+                    <li><strong>Malteadas (<em>y</em>):</strong> Variable dependiente (resultado).</li>
                 </ul>
             </div>
+        </div>
 
-            <h2>Gráfica de la Función</h2>
-            <div style="text-align: center;">
-                <canvas id="functionCanvas" height="250" width="450"></canvas>
+        <!-- SECCIÓN 4: CALCULADORA DE INVENTARIO -->
+        <div class="card">
+            <h2><i class="fa-solid fa-calculator"></i> 4. Calculadora de Inventario (Dominio de Funciones)</h2>
+
+            <div class="form-group">
+                <label for="calc-display">Expresión / Evaluación de Inventario:</label>
+                <input type="text" id="calc-display" readonly placeholder="Selecciona una operación...">
             </div>
-            <div class="explanation-box">
-                El plano muestra el <strong>Eje X</strong> (horizontal, correspondiente a las frutas ingresadas) y el <strong>Eje Y</strong> (vertical, correspondiente a las malteadas obtenidas). Los puntos rojos indican los registros procesados.
+
+            <div class="calc-grid">
+                <button class="btn-calc" onclick="setCalcOp('ln')">ln(x)</button>
+                <button class="btn-calc" onclick="setCalcOp('log')">log(x)</button>
+                <button class="btn-calc" onclick="setCalcOp('sqrt')">√(x)</button>
+                <button class="btn-calc" onclick="setCalcOp('exp')">e^x</button>
+                <button class="btn-calc" onclick="setCalcOp('inv')">10/x</button>
+                <button class="btn-calc action" onclick="clearCalc()">C</button>
             </div>
-        </section>
-    </main>
 
-    <!-- Sección de Calculadora / Inventario -->
-    <section>
-        <h2>🧮 Calculadora Rápida de Inventario de Frutas</h2>
-        <p>Prueba operaciones sencillas. Observa el <strong>dominio y el inventario de frutas</strong>: evalúa restricciones (como divisiones entre cero o raíces negativas).</p>
-        
-        <div>
-            <label for="calcX">Cantidad de Frutas: </label>
-            <input type="number" id="calcX" value="4" step="any">
+            <div class="form-group" style="margin-top: 10px;">
+                <label for="calc-x">Valor de Ingrediente (<em>x</em>):</label>
+                <input type="text" id="calc-x" value="-4">
+            </div>
+
+            <button class="btn" onclick="evaluateCalc()" style="background: var(--secondary);">
+                <i class="fa-solid fa-boxes-stacked"></i> Verificar Disponibilidad en Inventario
+            </button>
+
+            <div id="calc-result" class="math-formula" style="margin-top: 10px; background: #eccc6833; color: var(--text);">
+                Resultado de Inventario: Esperando verificación...
+            </div>
+
+            <div class="explanatory-legend">
+                <strong><i class="fa-solid fa-circle-info"></i> Utilidad de la Calculadora de Inventario:</strong>
+                Verifica el <strong>Dominio</strong> de la función. Si ingresas un valor no permitido, el sistema avisa que el ingrediente no está disponible.
+            </div>
         </div>
 
-        <div>
-            <label for="calcSelect">Operación: </label>
-            <select id="calcSelect">
-                <option value="sqrt">Raíz Cuadrada: f(x) = √x</option>
-                <option value="square">Cuadrado: f(x) = x²</option>
-                <option value="double">Doble: f(x) = 2x</option>
-                <option value="rational">Inversa: f(x) = 1 / x</option>
-            </select>
-        </div>
-
-        <div>
-            <button onclick="quickCalculate()">Calcular Inventario</button>
-        </div>
-
-        <div id="calcResult" class="explanation-box" style="margin-top: 15px;">
-            Resultado: Presiona calcular
-        </div>
-    </section>
-
-    <footer>
-        <h3>💡 ¿Por qué esto explica una función?</h3>
-        <ul>
-            <li><strong>Dominio y Frutas No Disponibles:</strong> No todas las recetas aceptan cualquier cantidad. 
-                <ul>
-                    <li>En <code>10/x</code> con x = 0, la máquina falla por división entre cero.</li>
-                    <li>En <code>√(x + 5)</code> con x &lt; -5, obtendrás error de dominio por raíz negativa.</li>
-                    <li>En <code>ln(x)</code> o <code>log₁₀(x)</code>, x debe ser estrictamente mayor a 0.</li>
-                </ul>
-            </li>
-            <li><strong>El Punto en el Plano (x, y):</strong> Cada valor ingresado tiene una única salida de malteadas.</li>
-        </ul>
-
-        <div>
-            <h3>📚 Bibliografía</h3>
-            <ul>
-                <li>Google DeepMind. (2026). Gemini AI (Versión 2.5) [Modelo de lenguaje grande]. https://gemini.google.com</li>
-                <li>James Stewart, Daniel Clegg y Saleem Watson. (2021). CALCULUS, Early Transcendentals (Ninth Edition). CENGAGE.</li>
-                <li>mathz. Funciones: La Máquina Matemática. mathz.app. https://www.mathz.app/es/lessons/functions-intro/</li>
+        <!-- SECCIÓN 5: BIBLIOGRAFÍA -->
+        <div class="card full-width">
+            <h2><i class="fa-solid fa-book-bookmark"></i> Bibliografía</h2>
+            <ul class="bibliography-list">
+                <li>Google DeepMind. (2026). Gemini AI (Versión 2.5) [Modelo de lenguaje grande]. <a href="https://gemini.google.com" target="_blank">https://gemini.google.com</a></li>
+                <li>James Stewart, Daniel Clegg y Saleem Watson. (2021). <em>CALCULUS, Early Transcendentals</em> (Ninth Edition). CENGAGE.</li>
+                <li>mathz. Funciones: La Máquina Matemática. mathz.app. <a href="https://www.mathz.app/es/lessons/functions-intro/#:~:text=Funciones%3A%20La%20M%C3%A1quina%20Matem%C3%A1tica.%20Imagina%20una%20m%C3%A1quina,donde%20cada%20entrada%20tiene%20exactamente%20una%20salida" target="_blank">https://www.mathz.app/es/lessons/functions-intro/#:~:text=Funciones%3A%20La%20M%C3%A1quina%20Matem%C3%A1tica.%20Imagina%20una%20m%C3%A1quina,donde%20cada%20entrada%20tiene%20exactamente
+                    %20una%20salida</a></li>
             </ul>
         </div>
-    </footer>
+
+    </div>
 
     <script>
-        let historyPoints = [];
+        // Variables de Estado
+        let chart = null;
+        let selectedCalcOp = 'sqrt';
+        let userPoints = [];
 
-        function updateRecipeDescription() {
-            const select = document.getElementById('recipeSelect');
-            const desc = document.getElementById('recipeDescription');
-            const val = select.value;
+        window.onload = function() {
+        initChart();
+        updateFormulaDisplay();
+        setCalcOp('sqrt');
+        };
 
-            const descriptions = {
-                linear: "Multiplica el número de frutas por 2 y le suma 3 vasos base de yogurt.",
-                quadratic: "Eleva al cuadrado el número de frutas y le resta 1 vaso.",
-                cubic: "Eleva al cubo la cantidad de frutas.",
-                polynomial: "Aplica la función cúbica menos tres veces las frutas más dos.",
-                euler: "Aplica la función exponencial natural de base e (eˣ).",
-                ln: "Aplica el logaritmo natural del número de frutas (requiere x > 0).",
-                log: "Aplica el logaritmo en base 10 del número de frutas (requiere x > 0).",
-                sqrt: "Suma 5 a las frutas y calcula su raíz cuadrada (requiere x >= -5).",
-                rational: "Divide 10 entre la cantidad de frutas (el dominio no acepta x = 0)."
-            };
-            desc.innerHTML = descriptions[val] || "";
+        function updateFormulaDisplay() {
+        const type = document.getElementById('recipe-select').value;
+        const display = document.getElementById('formula-display');
+        const descBox = document.getElementById('recipe-desc');
+
+        const formulas = {
+        lineal: "f(x) = 2x + 3",
+        cuadratica: "f(x) = x² - 2",
+        cubica: "f(x) = x³ - 3x",
+        polinomica: "f(x) = 0.5x⁴ - 2x² + 1",
+        euler: "f(x) = e^x",
+        ln: "f(x) = ln(x)   [Dominio: x > 0]",
+        log: "f(x) = log₁₀(x)   [Dominio: x > 0]",
+        radical: "f(x) = √(x)   [Dominio: x ≥ 0]",
+        racional: "f(x) = 10 / x   [Dominio: x ≠ 0]"
+        };
+
+        const descriptions = {
+        lineal: "Multiplica el número de frutas por 2 y le suma 3 vasos base de yogurt.",
+        cuadratica: "Eleva al cuadrado el número de frutas y le resta 2 vasos base de leche.",
+        cubica: "Eleva al cubo el número de frutas y le resta tres veces su cantidad en porciones de helado.",
+        polinomica: "Aplica una mezcla polinómica avanzada de cuarto grado combinando frutas y bases especiales.",
+        euler: "Aplica una base de crecimiento exponencial natural sobre la porción de fruta.",
+        ln: "Calcula el logaritmo natural de la cantidad de fruta líquida (requiere más de 0 frutas).",
+        log: "Calcula el logaritmo base 10 del néctar de fruta ingresado (requiere más de 0 frutas).",
+        radical: "Extrae la raíz cuadrada exacta de la cantidad de pulpa de fruta (requiere valores no negativos).",
+        racional: "Divide una dotación fija de 10 porciones entre la cantidad de frutas seleccionadas."
+        };
+
+        display.innerText = formulas[type];
+        descBox.innerText = descriptions[type];
+
+        userPoints = [];
+        updateChart(type, null);
         }
 
-        function calculateY(recipe, x) {
-            switch(recipe) {
-                case 'linear': return 2 * x + 3;
-                case 'quadratic': return Math.pow(x, 2) - 1;
-                case 'cubic': return Math.pow(x, 3);
-                case 'polynomial': return Math.pow(x, 3) - 3 * x + 2;
-                case 'euler': return Math.exp(x);
-                case 'ln': return x > 0 ? Math.log(x) : 'Error (Dominio x > 0)';
-                case 'log': return x > 0 ? Math.log10(x) : 'Error (Dominio x > 0)';
-                case 'sqrt': return (x + 5) >= 0 ? Math.sqrt(x + 5) : 'Error (Raíz negativa)';
-                case 'rational': return x !== 0 ? 10 / x : 'Error (División entre cero)';
-                default: return 0;
-            }
+        // Función segura para evaluar expresiones matemáticas escritas por el usuario (ej: 2+3, 4*2, etc.)
+        function parseInputExpression(inputStr) {
+        if (typeof inputStr === 'number') return inputStr;
+        if (!inputStr || typeof inputStr !== 'string') throw new Error("Entrada vacía o inválida.");
+
+        // Limpiar espacios y verificar caracteres permitidos por seguridad (solo números, operadores aritméticos básicos y puntos decimales)
+        const sanitized = inputStr.trim();
+        if (!/^[\d\.\+\-\*\/\(\)\s]+$/.test(sanitized)) {
+        throw new Error("La expresión solo puede contener números y operaciones básicas (+, -, *, /).");
         }
 
-        function processMachine() {
-            const recipe = document.getElementById('recipeSelect').value;
-            const x = parseFloat(document.getElementById('inputX').value);
-            const recipeText = document.getElementById('recipeSelect').options[document.getElementById('recipeSelect').selectedIndex].text;
-
-            if (isNaN(x)) {
-                alert("Por favor ingresa un número válido de frutas.");
-                return;
-            }
-
-            const y = calculateY(recipe, x);
-
-            // Agregar a la tabla
-            historyPoints.push({ x: x, y: typeof y === 'number' ? y : null });
-
-            const tbody = document.getElementById('resultTableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${x}</td><td>${recipeText.split(':')[0]}</td><td>${typeof y === 'number' ? y.toFixed(2) : y}</td>`;
-            tbody.appendChild(row);
-
-            drawGraph();
+        try {
+        // Usamos Function para evaluar de manera controlada la operación aritmética simple
+        const result = Function('"use strict"; return (' + sanitized + ')')();
+        if (typeof result !== 'number' || isNaN(result) || !isFinite(result)) {
+        throw new Error("La operación no devolvió un número válido.");
+        }
+        return result;
+        } catch (e) {
+        throw new Error("Error al calcular la operación matemática ingresada.");
+        }
         }
 
-        function drawGraph() {
-            const canvas = document.getElementById('functionCanvas');
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-
-            ctx.clearRect(0, 0, width, height);
-
-            // Dibujar Ejes X e Y centrados o adaptados
-            const originX = width / 2;
-            const originY = height / 2;
-
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 1;
-
-            // Eje Y
-            ctx.beginPath();
-            ctx.moveTo(originX, 0);
-            ctx.lineTo(originX, height);
-            ctx.stroke();
-
-            // Eje X
-            ctx.beginPath();
-            ctx.moveTo(0, originY);
-            ctx.lineTo(width, originY);
-            ctx.stroke();
-
-            // Etiquetas de Ejes
-            ctx.fillStyle = '#666';
-            ctx.font = '12px Arial';
-            ctx.fillText('Eje Y (Malteadas)', originX + 5, 15);
-            ctx.fillText('Eje X (Frutas)', width - 80, originY - 5);
-
-            // Dibujar puntos registrados
-            ctx.fillStyle = '#ff477e';
-            historyPoints.forEach(pt => {
-                if (pt.y !== null) {
-                    // Mapeo simple de coordenadas al canvas
-                    let px = originX + (pt.x * 20);
-                    let py = originY - (pt.y * 20);
-
-                    ctx.beginPath();
-                    ctx.arc(px, py, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
+        function evaluateFunction(type, x) {
+        switch(type) {
+        case 'lineal':
+        return 2 * x + 3;
+        case 'cuadratica':
+        return Math.pow(x, 2) - 2;
+        case 'cubica':
+        return Math.pow(x, 3) - (3 * x);
+        case 'polinomica':
+        return (0.5 * Math.pow(x, 4)) - (2 * Math.pow(x, 2)) + 1;
+        case 'euler':
+        return Math.exp(x);
+        case 'ln':
+        if (x <= 0) throw new Error("El logaritmo natural solo acepta valores mayores que cero (x > 0). Ingrediente no disponible.");
+        return Math.log(x);
+        case 'log':
+        if (x <= 0) throw new Error("El logaritmo base 10 solo acepta valores mayores que cero (x > 0). Ingrediente no disponible.");
+        return Math.log10(x);
+        case 'radical':
+        if (x < 0) throw new Error("No se puede extraer raíz cuadrada de un valor negativo en los números reales (x ≥ 0). Ingrediente no disponible.");
+        return Math.sqrt(x);
+        case 'racional':
+        if (x === 0) throw new Error("División por cero no determinada (x ≠ 0). Ingrediente no disponible.");
+        return 10 / x;
+        default:
+        return 0;
+        }
         }
 
-        function quickCalculate() {
-            const x = parseFloat(document.getElementById('calcX').value);
-            const op = document.getElementById('calcSelect').value;
-            const resDiv = document.getElementById('calcResult');
+        function prepareSmoothie() {
+        const type = document.getElementById('recipe-select').value;
+        const rawInput = document.getElementById('input-x').value;
+        const errorAlert = document.getElementById('error-alert');
+        const blenderLiquid = document.getElementById('blender-liquid');
+        const blenderStatus = document.getElementById('blender-status');
 
-            if (isNaN(x)) {
-                resDiv.innerHTML = "Resultado: Por favor ingresa un número válido.";
-                return;
-            }
+        errorAlert.style.display = 'none';
 
-            let res;
-            if (op === 'sqrt') {
-                res = x >= 0 ? Math.sqrt(x) : "Error: Dominio inválido (No existe raíz real de números negativos en el inventario básico).";
-            } else if (op === 'square') {
-                res = Math.pow(x, 2);
-            } else if (op === 'double') {
-                res = 2 * x;
-            } else if (op === 'rational') {
-                res = x !== 0 ? (1 / x) : "Error: Indefinido (División entre cero en el inventario).";
-            }
+        try {
+        // Evaluamos tanto si es un número simple como si escribieron una operación como "2+3" o "5*2"
+        const xVal = parseInputExpression(rawInput);
+        const yVal = evaluateFunction(type, xVal);
 
-            resDiv.innerHTML = `<strong>Resultado del Inventario:</strong> ${typeof res === 'number' ? res.toFixed(4) : res}`;
+        blenderStatus.innerText = "¡Licuando ingredientes!";
+        blenderLiquid.classList.add('blending');
+        blenderLiquid.style.height = '80%';
+
+        setTimeout(() => {
+        blenderLiquid.classList.remove('blending');
+        blenderStatus.innerText = `¡Malteada Lista! Resultado y = ${yVal.toFixed(2)}`;
+        addHistoryRow(`${rawInput} (= ${xVal})`, type, yVal.toFixed(2));
+
+        const accumulate = document.getElementById('accumulate-points').checked;
+        if (accumulate) {
+        userPoints.push({ x: xVal, y: yVal });
+        } else {
+        userPoints = [{ x: xVal, y: yVal }];
+        }
+        updateChart(type, userPoints);
+
+        }, 800);
+
+        } catch (err) {
+        blenderLiquid.style.height = '0%';
+        blenderStatus.innerText = "Error en la preparación";
+        showError(err.message);
+        }
         }
 
-        // Inicializar descripción al cargar
-        updateRecipeDescription();
-        drawGraph();
+        function showError(msg) {
+        const errorAlert = document.getElementById('error-alert');
+        errorAlert.innerText = msg;
+        errorAlert.style.display = 'block';
+        }
+
+        function addHistoryRow(xDisplay, recipe, y) {
+        const tbody = document.getElementById('history-tbody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td><strong>${xDisplay}</strong></td>
+        <td>${recipe.toUpperCase()}</td>
+        <td><strong>${y}</strong> Malteadas</td>
+        `;
+        tbody.insertBefore(row, tbody.firstChild);
+        }
+
+        function initChart() {
+        const ctx = document.getElementById('functionChart').getContext('2d');
+        chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+        datasets: [
+        {
+        label: 'Curva de la Función f(x)',
+        data: [],
+        borderColor: '#ff6b81',
+        backgroundColor: 'rgba(255, 107, 129, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0
+        },
+        {
+        label: 'Resultado de la Malteada (Punto x, y)',
+        data: [],
+        borderColor: '#ffa502',
+        backgroundColor: '#ffa502',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        showLine: false,
+        type: 'scatter'
+        }
+        ]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+        x: {
+        type: 'linear',
+        position: 'bottom',
+        title: { display: true, text: 'Fruta (x)' }
+        },
+        y: {
+        title: { display: true, text: 'Malteadas (y)' }
+        }
+        }
+        }
+        });
+        }
+
+        function updateChart(type, activePoints) {
+        if (!chart) return;
+
+        const curveData = [];
+
+        for (let x = -5; x <= 5; x += 0.2) {
+        const roundedX = parseFloat(x.toFixed(2));
+        try {
+        const y = evaluateFunction(type, roundedX);
+        if (isFinite(y) && Math.abs(y) < 50) {
+        curveData.push({ x: roundedX, y: y });
+        }
+        } catch (e) {}
+        }
+
+        chart.data.datasets[0].data = curveData;
+        chart.data.datasets[0].label = `Curva: ${type.toUpperCase()}`;
+
+        if (activePoints) {
+        chart.data.datasets[1].data = activePoints;
+        } else {
+        chart.data.datasets[1].data = [];
+        }
+
+        chart.update();
+        }
+
+        function toggleAccumulation() {
+        if (!document.getElementById('accumulate-points').checked && userPoints.length > 1) {
+        userPoints = [userPoints[userPoints.length - 1]];
+        const type = document.getElementById('recipe-select').value;
+        updateChart(type, userPoints);
+        }
+        }
+
+        function setCalcOp(op) {
+        selectedCalcOp = op;
+        const display = document.getElementById('calc-display');
+        const ops = {
+        ln: "f(x) = ln(x)",
+        log: "f(x) = log₁₀(x)",
+        sqrt: "f(x) = √(x)",
+        exp: "f(x) = e^x",
+        inv: "f(x) = 10 / x"
+        };
+        display.value = ops[op];
+        }
+
+        function clearCalc() {
+        document.getElementById('calc-display').value = '';
+        document.getElementById('calc-result').innerText = 'Resultado de Inventario: Esperando verificación...';
+        }
+
+        function evaluateCalc() {
+        const rawX = document.getElementById('calc-x').value;
+        const resultBox = document.getElementById('calc-result');
+
+        try {
+        const x = parseInputExpression(rawX);
+        let res = 0;
+        if (selectedCalcOp === 'ln') {
+        if (x <= 0) throw new Error("Logaritmo indefinido para x ≤ 0.");
+        res = Math.log(x);
+        } else if (selectedCalcOp === 'log') {
+        if (x <= 0) throw new Error("Logaritmo indefinido para x ≤ 0.");
+        res = Math.log10(x);
+        } else if (selectedCalcOp === 'sqrt') {
+        if (x < 0) throw new Error("Raíz real indefinida para x < 0.");
+        res = Math.sqrt(x);
+        } else if (selectedCalcOp === 'exp') {
+        res = Math.exp(x);
+        } else if (selectedCalcOp === 'inv') {
+        if (x === 0) throw new Error("Indeterminación por división entre cero.");
+        res = 10 / x;
+        }
+
+        resultBox.innerHTML = `<span style="color: #2ed573;"><i class="fa-solid fa-check"></i> Ingrediente Disponible:</span> f(${rawX}) = ${res.toFixed(4)}`;
+
+        } catch (err) {
+        resultBox.innerHTML = `<span style="color: #ff4757;"><i class="fa-solid fa-triangle-exclamation"></i> Ingrediente NO Disponible:</span> ${err.message}`;
+        }
+        }
     </script>
 </body>
 </html>
