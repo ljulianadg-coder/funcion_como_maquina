@@ -394,27 +394,21 @@
     </footer>
 
     <script>
-        // Configuración de recetas principales (Sintaxis limpia)
-        var recipes = {
+        // Configuración de recetas principales
+        const recipes = {
             linear: {
-                formula: function(x) {
-                    return 2 * x + 3;
-                },
+                formula: (x) => 2 * x + 3,
                 expression: "f(x) = 2x + 3",
                 desc: "Multiplica las frutas por 2 y le suma 3 de base."
             },
             quadratic: {
-                formula: function(x) {
-                    return Math.pow(x, 2) - 1;
-                },
+                formula: (x) => Math.pow(x, 2) - 1,
                 expression: "f(x) = x² - 1",
                 desc: "Eleva las frutas al cuadrado y le resta 1."
             },
             rational: {
-                formula: function(x) {
-                    if (x === 0) {
-                        throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
-                    }
+                formula: (x) => {
+                    if (x === 0) throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
                     return 10 / x;
                 },
                 expression: "f(x) = 10 / x",
@@ -422,19 +416,19 @@
             }
         };
 
-        // Elementos DOM
-        var recipeSelect = document.getElementById('recipe-select');
-        var recipeDesc = document.getElementById('recipe-desc');
-        var fruitInput = document.getElementById('fruit-input');
-        var blendBtn = document.getElementById('blend-btn');
-        var statusBox = document.getElementById('status-box');
-        var blade = document.getElementById('blade');
-        var liquid = document.getElementById('liquid');
-        var historyTable = document.getElementById('history-table');
+        // DOM principal
+        const recipeSelect = document.getElementById('recipe-select');
+        const recipeDesc = document.getElementById('recipe-desc');
+        const fruitInput = document.getElementById('fruit-input');
+        const blendBtn = document.getElementById('blend-btn');
+        const statusBox = document.getElementById('status-box');
+        const blade = document.getElementById('blade');
+        const liquid = document.getElementById('liquid');
+        const historyTable = document.getElementById('history-table');
 
-        // Configuración de Chart.js
-        var ctx = document.getElementById('functionChart').getContext('2d');
-        var chart = new Chart(ctx, {
+        // Chart.js
+        const ctx = document.getElementById('functionChart').getContext('2d');
+        const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 datasets: [
@@ -475,42 +469,37 @@
         });
 
         function updateFunctionCurve(recipeKey) {
-            var recipe = recipes[recipeKey];
-            var curvePoints = [];
+            const recipe = recipes[recipeKey];
+            const curvePoints = [];
             
-            for (var x = -10; x <= 10; x += 0.2) {
+            for (let x = -10; x <= 10; x += 0.2) {
                 try {
-                    var y = recipe.formula(x);
+                    const y = recipe.formula(x);
                     if (Math.abs(y) <= 30) {
                         curvePoints.push({ x: parseFloat(x.toFixed(2)), y: parseFloat(y.toFixed(2)) });
                     }
-                } catch (e) {
-                    // Ignorar puntos fuera del dominio
-                }
+                } catch (e) {}
             }
             
             chart.data.datasets[0].data = curvePoints;
-            chart.data.datasets[0].label = 'Curva de ' + recipe.expression;
+            chart.data.datasets[0].label = `Curva de ${recipe.expression}`;
             chart.update();
         }
 
-        // Inicializar curva por primera vez
         updateFunctionCurve(recipeSelect.value);
 
-        // Evento al cambiar selección de receta
-        recipeSelect.addEventListener('change', function() {
-            var key = recipeSelect.value;
+        recipeSelect.addEventListener('change', () => {
+            const key = recipeSelect.value;
             recipeDesc.textContent = recipes[key].desc;
             chart.data.datasets[1].data = []; 
             historyTable.innerHTML = ''; 
             updateFunctionCurve(key);
         });
 
-        // Evento del botón Licuar
-        blendBtn.addEventListener('click', function() {
-            var x = parseFloat(fruitInput.value);
-            var selectedKey = recipeSelect.value;
-            var recipe = recipes[selectedKey];
+        blendBtn.addEventListener('click', () => {
+            const x = parseFloat(fruitInput.value);
+            const selectedKey = recipeSelect.value;
+            const recipe = recipes[selectedKey];
 
             if (isNaN(x)) {
                 statusBox.textContent = "⚠️ Ingresa un número válido de frutas.";
@@ -521,28 +510,28 @@
             liquid.style.height = "70%";
             statusBox.textContent = "Licuando frutas y procesando función...";
 
-            setTimeout(function() {
+            setTimeout(() => {
                 blade.classList.remove('spinning');
                 liquid.style.height = "0%";
 
                 try {
-                    var y = recipe.formula(x);
-                    var resultY = Number.isInteger(y) ? y : y.toFixed(2);
+                    const y = recipe.formula(x);
+                    const resultY = Number.isInteger(y) ? y : y.toFixed(2);
                     
-                    statusBox.textContent = "✅ ¡Listo! " + x + " frutas ➔ " + resultY + " malteadas.";
+                    statusBox.textContent = `✅ ¡Listo! ${x} frutas ➔ ${resultY} malteadas.`;
                     
                     addRowToTable(x, recipe.expression, resultY);
                     addPointToChart(x, parseFloat(resultY));
 
                 } catch (error) {
-                    statusBox.textContent = "❌ " + error.message;
+                    statusBox.textContent = `❌ ${error.message}`;
                 }
             }, 800);
         });
 
         function addRowToTable(x, expr, y) {
-            var row = document.createElement('tr');
-            row.innerHTML = '<td>' + x + '</td><td>' + expr + '</td><td><strong>' + y + '</strong></td>';
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${x}</td><td>${expr}</td><td><strong>${y}</strong></td>`;
             historyTable.prepend(row);
         }
 
@@ -551,15 +540,15 @@
             chart.update();
         }
 
-        // Lógica de la Calculadora Rápida
-        var calcX = document.getElementById('calc-x');
-        var calcOp = document.getElementById('calc-op');
-        var calcBtn = document.getElementById('calc-btn');
-        var calcResult = document.getElementById('calc-result');
+        // Lógica de la Calculadora
+        const calcX = document.getElementById('calc-x');
+        const calcOp = document.getElementById('calc-op');
+        const calcBtn = document.getElementById('calc-btn');
+        const calcResult = document.getElementById('calc-result');
 
-        calcBtn.addEventListener('click', function() {
-            var x = parseFloat(calcX.value);
-            var op = calcOp.value;
+        calcBtn.addEventListener('click', () => {
+            const x = parseFloat(calcX.value);
+            const op = calcOp.value;
 
             if (isNaN(x)) {
                 calcResult.textContent = "Resultado: Ingresa un número válido";
@@ -569,20 +558,20 @@
 
             if (op === 'sqrt') {
                 if (x < 0) {
-                    calcResult.textContent = "❌ Error: √(" + x + ") no existe en números reales. ¡Fruta no disponible en el inventario!";
+                    calcResult.textContent = `❌ Error: √(${x}) no existe en números reales. ¡Fruta no disponible en el inventario!`;
                     calcResult.className = "calc-result error";
                 } else {
-                    var resSqrt = Math.sqrt(x).toFixed(2);
-                    calcResult.textContent = "✅ Resultado: √(" + x + ") = " + resSqrt + " unidades de sabor";
+                    const res = Math.sqrt(x).toFixed(2);
+                    calcResult.textContent = `✅ Resultado: √(${x}) = ${res} unidades de sabor`;
                     calcResult.className = "calc-result";
                 }
             } else if (op === 'square') {
-                var resSq = Math.pow(x, 2);
-                calcResult.textContent = "✅ Resultado: (" + x + ")² = " + resSq;
+                const res = Math.pow(x, 2);
+                calcResult.textContent = `✅ Resultado: (${x})² = ${res}`;
                 calcResult.className = "calc-result";
             } else if (op === 'double') {
-                var resDbl = 2 * x;
-                calcResult.textContent = "✅ Resultado: 2 * (" + x + ") = " + resDbl;
+                const res = 2 * x;
+                calcResult.textContent = `✅ Resultado: 2 * (${x}) = ${res}`;
                 calcResult.className = "calc-result";
             }
         });
