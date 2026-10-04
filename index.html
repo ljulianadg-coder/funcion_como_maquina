@@ -203,6 +203,14 @@
         .chart-container {
             height: 220px;
             position: relative;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
         }
 
         /* Calculadora */
@@ -263,8 +271,6 @@
             padding-top: 15px;
         }
     </style>
-    <!-- Carga de Chart.js para la gráfica -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -338,7 +344,7 @@
 
             <h2>Gráfica de la Función</h2>
             <div class="chart-container">
-                <canvas id="functionChart"></canvas>
+                <canvas id="functionCanvas" width="400" height="220"></canvas>
             </div>
         </section>
     </main>
@@ -394,187 +400,212 @@
     </footer>
 
     <script>
-        // Configuración de recetas principales
-        const recipes = {
-            linear: {
-                formula: (x) => 2 * x + 3,
-                expression: "f(x) = 2x + 3",
-                desc: "Multiplica las frutas por 2 y le suma 3 de base."
-            },
-            quadratic: {
-                formula: (x) => Math.pow(x, 2) - 1,
-                expression: "f(x) = x² - 1",
-                desc: "Eleva las frutas al cuadrado y le resta 1."
-            },
-            rational: {
-                formula: (x) => {
-                    if (x === 0) throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
-                    return 10 / x;
+        function initApp() {
+            var recipes = {
+                linear: {
+                    formula: function(x) { return 2 * x + 3; },
+                    expression: "f(x) = 2x + 3",
+                    desc: "Multiplica las frutas por 2 y le suma 3 de base."
                 },
-                expression: "f(x) = 10 / x",
-                desc: "Divide 10 entre la cantidad de frutas."
-            }
-        };
-
-        // DOM principal
-        const recipeSelect = document.getElementById('recipe-select');
-        const recipeDesc = document.getElementById('recipe-desc');
-        const fruitInput = document.getElementById('fruit-input');
-        const blendBtn = document.getElementById('blend-btn');
-        const statusBox = document.getElementById('status-box');
-        const blade = document.getElementById('blade');
-        const liquid = document.getElementById('liquid');
-        const historyTable = document.getElementById('history-table');
-
-        // Chart.js
-        const ctx = document.getElementById('functionChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [
-                    {
-                        label: 'Curva de la Receta f(x)',
-                        data: [],
-                        borderColor: '#a4b0be',
-                        borderWidth: 2,
-                        fill: false,
-                        pointRadius: 0,
-                        tension: 0.1
+                quadratic: {
+                    formula: function(x) { return Math.pow(x, 2) - 1; },
+                    expression: "f(x) = x² - 1",
+                    desc: "Eleva las frutas al cuadrado y le resta 1."
+                },
+                rational: {
+                    formula: function(x) {
+                        if (x === 0) {
+                            throw new Error("¡Error de Dominio! No se puede dividir entre 0.");
+                        }
+                        return 10 / x;
                     },
-                    {
-                        label: 'Comandos Procesados (x, y)',
-                        data: [],
-                        backgroundColor: '#ff4757',
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        pointRadius: 7,
-                        showLine: false
+                    expression: "f(x) = 10 / x",
+                    desc: "Divide 10 entre la cantidad de frutas."
+                }
+            };
+
+            var recipeSelect = document.getElementById('recipe-select');
+            var recipeDesc = document.getElementById('recipe-desc');
+            var fruitInput = document.getElementById('fruit-input');
+            var blendBtn = document.getElementById('blend-btn');
+            var statusBox = document.getElementById('status-box');
+            var blade = document.getElementById('blade');
+            var liquid = document.getElementById('liquid');
+            var historyTable = document.getElementById('history-table');
+            
+            var canvas = document.getElementById('functionCanvas');
+            if(!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var pointsHistory = [];
+
+            function drawChart() {
+                var width = canvas.width;
+                var height = canvas.height;
+                ctx.clearRect(0, 0, width, height);
+
+                var centerX = width / 2;
+                var centerY = height / 2;
+                var scaleX = width / 20;
+                var scaleY = height / 40;
+
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                for (var x = -10; x <= 10; x += 2) {
+                    var px = centerX + x * scaleX;
+                    ctx.beginPath();
+                    ctx.moveTo(px, 0);
+                    ctx.lineTo(px, height);
+                    ctx.stroke();
+                }
+                for (var y = -20; y <= 20; y += 5) {
+                    var py = centerY - y * scaleY;
+                    ctx.beginPath();
+                    ctx.moveTo(0, py);
+                    ctx.lineTo(width, py);
+                    ctx.stroke();
+                }
+
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, centerY);
+                ctx.lineTo(width, centerY);
+                ctx.moveTo(centerX, 0);
+                ctx.lineTo(centerX, height);
+                ctx.stroke();
+
+                var currentRecipe = recipes[recipeSelect.value];
+                ctx.strokeStyle = '#ff4757';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                
+                var firstPoint = true;
+                for (var xVal = -10; xVal <= 10; xVal += 0.1) {
+                    try {
+                        var yVal = currentRecipe.formula(xVal);
+                        if (yVal >= -20 && yVal <= 20) {
+                            var px = centerX + xVal * scaleX;
+                            var py = centerY - yVal * scaleY;
+                            if (firstPoint) {
+                                ctx.moveTo(px, py);
+                                firstPoint = false;
+                            } else {
+                                ctx.lineTo(px, py);
+                            }
+                        } else {
+                            firstPoint = true;
+                        }
+                    } catch(e) {
+                        firstPoint = true;
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { 
-                        type: 'linear',
-                        position: 'bottom',
-                        title: { display: true, text: 'Frutas (x)' } 
-                    },
-                    y: { 
-                        title: { display: true, text: 'Malteadas (y)' } 
+                }
+                ctx.stroke();
+
+                for (var i = 0; i < pointsHistory.length; i++) {
+                    var pt = pointsHistory[i];
+                    var px = centerX + pt.x * scaleX;
+                    var py = centerY - pt.y * scaleY;
+
+                    if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                        ctx.fillStyle = '#2ed573';
+                        ctx.beginPath();
+                        ctx.arc(px, py, 5, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
                     }
                 }
             }
-        });
 
-        function updateFunctionCurve(recipeKey) {
-            const recipe = recipes[recipeKey];
-            const curvePoints = [];
-            
-            for (let x = -10; x <= 10; x += 0.2) {
-                try {
-                    const y = recipe.formula(x);
-                    if (Math.abs(y) <= 30) {
-                        curvePoints.push({ x: parseFloat(x.toFixed(2)), y: parseFloat(y.toFixed(2)) });
-                    }
-                } catch (e) {}
-            }
-            
-            chart.data.datasets[0].data = curvePoints;
-            chart.data.datasets[0].label = `Curva de ${recipe.expression}`;
-            chart.update();
-        }
+            recipeSelect.addEventListener('change', function() {
+                var key = recipeSelect.value;
+                recipeDesc.textContent = recipes[key].desc;
+                pointsHistory = [];
+                historyTable.innerHTML = '';
+                drawChart();
+            });
 
-        updateFunctionCurve(recipeSelect.value);
+            blendBtn.addEventListener('click', function() {
+                var x = parseFloat(fruitInput.value);
+                var selectedKey = recipeSelect.value;
+                var recipe = recipes[selectedKey];
 
-        recipeSelect.addEventListener('change', () => {
-            const key = recipeSelect.value;
-            recipeDesc.textContent = recipes[key].desc;
-            chart.data.datasets[1].data = []; 
-            historyTable.innerHTML = ''; 
-            updateFunctionCurve(key);
-        });
-
-        blendBtn.addEventListener('click', () => {
-            const x = parseFloat(fruitInput.value);
-            const selectedKey = recipeSelect.value;
-            const recipe = recipes[selectedKey];
-
-            if (isNaN(x)) {
-                statusBox.textContent = "⚠️ Ingresa un número válido de frutas.";
-                return;
-            }
-
-            blade.classList.add('spinning');
-            liquid.style.height = "70%";
-            statusBox.textContent = "Licuando frutas y procesando función...";
-
-            setTimeout(() => {
-                blade.classList.remove('spinning');
-                liquid.style.height = "0%";
-
-                try {
-                    const y = recipe.formula(x);
-                    const resultY = Number.isInteger(y) ? y : y.toFixed(2);
-                    
-                    statusBox.textContent = `✅ ¡Listo! ${x} frutas ➔ ${resultY} malteadas.`;
-                    
-                    addRowToTable(x, recipe.expression, resultY);
-                    addPointToChart(x, parseFloat(resultY));
-
-                } catch (error) {
-                    statusBox.textContent = `❌ ${error.message}`;
+                if (isNaN(x)) {
+                    statusBox.textContent = "⚠️ Ingresa un número válido de frutas.";
+                    return;
                 }
-            }, 800);
-        });
 
-        function addRowToTable(x, expr, y) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${x}</td><td>${expr}</td><td><strong>${y}</strong></td>`;
-            historyTable.prepend(row);
-        }
+                blade.classList.add('spinning');
+                liquid.style.height = "70%";
+                statusBox.textContent = "Licuando frutas y procesando función...";
 
-        function addPointToChart(x, y) {
-            chart.data.datasets[1].data.push({ x: x, y: y });
-            chart.update();
-        }
+                setTimeout(function() {
+                    blade.classList.remove('spinning');
+                    liquid.style.height = "0%";
 
-        // Lógica de la Calculadora
-        const calcX = document.getElementById('calc-x');
-        const calcOp = document.getElementById('calc-op');
-        const calcBtn = document.getElementById('calc-btn');
-        const calcResult = document.getElementById('calc-result');
+                    try {
+                        var y = recipe.formula(x);
+                        var resultY = Number.isInteger(y) ? y : y.toFixed(2);
+                        
+                        statusBox.textContent = "✅ ¡Listo! " + x + " frutas ➔ " + resultY + " malteadas.";
+                        
+                        var row = document.createElement('tr');
+                        row.innerHTML = '<td>' + x + '</td><td>' + recipe.expression + '</td><td><strong>' + resultY + '</strong></td>';
+                        historyTable.prepend(row);
 
-        calcBtn.addEventListener('click', () => {
-            const x = parseFloat(calcX.value);
-            const op = calcOp.value;
+                        pointsHistory.push({ x: x, y: parseFloat(resultY) });
+                        drawChart();
 
-            if (isNaN(x)) {
-                calcResult.textContent = "Resultado: Ingresa un número válido";
-                calcResult.className = "calc-result error";
-                return;
-            }
+                    } catch (error) {
+                        statusBox.textContent = "❌ " + error.message;
+                    }
+                }, 800);
+            });
 
-            if (op === 'sqrt') {
-                if (x < 0) {
-                    calcResult.textContent = `❌ Error: √(${x}) no existe en números reales. ¡Fruta no disponible en el inventario!`;
+            var calcX = document.getElementById('calc-x');
+            var calcOp = document.getElementById('calc-op');
+            var calcBtn = document.getElementById('calc-btn');
+            var calcResult = document.getElementById('calc-result');
+
+            calcBtn.addEventListener('click', function() {
+                var x = parseFloat(calcX.value);
+                var op = calcOp.value;
+
+                if (isNaN(x)) {
+                    calcResult.textContent = "Resultado: Ingresa un número válido";
                     calcResult.className = "calc-result error";
-                } else {
-                    const res = Math.sqrt(x).toFixed(2);
-                    calcResult.textContent = `✅ Resultado: √(${x}) = ${res} unidades de sabor`;
+                    return;
+                }
+
+                if (op === 'sqrt') {
+                    if (x < 0) {
+                        calcResult.textContent = "❌ Error: √(" + x + ") no existe en números reales. ¡Fruta no disponible en el inventario!";
+                        calcResult.className = "calc-result error";
+                    } else {
+                        var resSqrt = Math.sqrt(x).toFixed(2);
+                        calcResult.textContent = "✅ Resultado: √(" + x + ") = " + resSqrt + " unidades de sabor";
+                        calcResult.className = "calc-result";
+                    }
+                } else if (op === 'square') {
+                    var resSq = Math.pow(x, 2);
+                    calcResult.textContent = "✅ Resultado: (" + x + ")² = " + resSq;
+                    calcResult.className = "calc-result";
+                } else if (op === 'double') {
+                    var resDbl = 2 * x;
+                    calcResult.textContent = "✅ Resultado: 2 * (" + x + ") = " + resDbl;
                     calcResult.className = "calc-result";
                 }
-            } else if (op === 'square') {
-                const res = Math.pow(x, 2);
-                calcResult.textContent = `✅ Resultado: (${x})² = ${res}`;
-                calcResult.className = "calc-result";
-            } else if (op === 'double') {
-                const res = 2 * x;
-                calcResult.textContent = `✅ Resultado: 2 * (${x}) = ${res}`;
-                calcResult.className = "calc-result";
-            }
-        });
+            });
+
+            drawChart();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
     </script>
 </body>
 </html>
